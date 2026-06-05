@@ -5,9 +5,7 @@ export const loginUser = async(email : string,password:string) => {
         const response = await api.post("/auth/login", {
             email,
             password
-        })
-        console.log("Logged in user", response);
-        
+        })        
         return response.data;
     }
     catch(error) {
