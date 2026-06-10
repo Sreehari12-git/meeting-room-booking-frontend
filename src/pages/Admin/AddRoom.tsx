@@ -192,7 +192,7 @@ function AddRoom() {
                 className="flex-1 flex items-center justify-center gap-1.5 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg px-4 py-2.5 hover:bg-gray-50 transition">
                 <i className="ti ti-x text-xs" aria-hidden="true" /> Cancel
               </button>
-              <button onClick={() => updRoom(selectedRoom.name, { name: editName, capacity: editCapacity, status: editStatus, amenities: editAmenities, maintenanceStart: editMaintenanceStart, maintenanceEnd: editMaintenanceEnd })}
+              <button onClick={() => updRoom(selectedRoom.name, { name: editName, capacity: editCapacity, status: editStatus, amenities: editAmenities, maintenanceStart: editMaintenanceStart ? new Date(editMaintenanceStart).toISOString(): null, maintenanceEnd: editMaintenanceEnd ? new Date(editMaintenanceEnd).toISOString() : null })}
                 className="flex-1 flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg px-4 py-2.5 transition">
                 <i className="ti ti-check text-xs" aria-hidden="true" /> Update room
               </button>
