@@ -145,7 +145,7 @@ function AddRoom() {
         <i className="ti ti-calendar" aria-hidden="true" /> Maintenance start
       </label>
       <input
-        type="date"
+        type="datetime-local"
         value={editMaintenanceStart}
         onChange={e => setEditMaintenanceStart(e.target.value)}
         className={inputClass}
@@ -156,7 +156,7 @@ function AddRoom() {
         <i className="ti ti-calendar-due" aria-hidden="true" /> Maintenance end
       </label>
       <input
-        type="date"
+        type="datetime-local"
         value={editMaintenanceEnd}
         onChange={e => setEditMaintenanceEnd(e.target.value)}
         className={inputClass}
