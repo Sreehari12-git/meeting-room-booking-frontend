@@ -308,6 +308,14 @@ function AddRoom() {
                     <span className={`w-1.5 h-1.5 rounded-full ${sc.dot}`} />
                     {sc.label}
                   </span>
+                  {room.status === "MAINTANENCE" && room.maintenanceStart && room.maintenanceEnd && (
+                  <span className="flex items-center gap-1 text-xs text-amber-600">
+                    <i className="ti ti-calendar-exclamation text-xs" aria-hidden="true" />
+                      {new Date(room.maintenanceStart).toLocaleString([], { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                      {" → "}
+                      {new Date(room.maintenanceEnd).toLocaleString([], { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                    </span>
+                )}
                 </div>
                 {room.Amenities?.length > 0 && (
                   <div className="flex flex-wrap gap-1.5">
