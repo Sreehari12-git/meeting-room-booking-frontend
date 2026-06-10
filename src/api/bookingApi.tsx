@@ -29,3 +29,8 @@ export const cancelBooking = async (bookingId: number) => {
     return response.data;
 };
 
+export const getAllBookings = async() => {
+    const response = await api.get("/booking/all-bookings");
+    return response.data;
+}
+
