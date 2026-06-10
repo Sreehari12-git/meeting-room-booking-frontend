@@ -61,7 +61,7 @@ function BookRoom() {
     setBookingError("");
 
     try {
-      await bookRoom(selectedRoom.id, startTime, endTime);
+      await bookRoom(selectedRoom.id, new Date(startTime).toISOString(), new Date(endTime).toISOString());
       setBookingSuccess(true);
       setTimeout(() => {
         setSelectedRoom(null);
@@ -160,7 +160,7 @@ function BookRoom() {
                 onChange={(e) => setStartTime(e.target.value)}
                 min={new Date().toISOString().slice(0, 16)}
                 className={inputClass}
-              />
+              /> 
             </div>
 
             <div className="mb-5">
@@ -170,7 +170,7 @@ function BookRoom() {
               </label>
               <input
                 type="datetime-local"
-                value={endTime}
+                value={endTime}       
                 onChange={(e) => setEndTime(e.target.value)}
                 min={startTime || new Date().toISOString().slice(0, 16)}
                 className={inputClass}

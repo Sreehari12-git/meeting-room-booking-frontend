@@ -133,7 +133,6 @@ function AddRoom() {
               <select value={editStatus} onChange={e => setEditStatus(e.target.value)} className={inputClass + " cursor-pointer"}>
                 <option value="AVAILABLE">Available</option>
                 <option value="MAINTANENCE">Maintenance</option>
-                <option value="OCCUPIED">Occupied</option>
               </select>
             </div>
 
