@@ -20,7 +20,7 @@ function Availability() {
   const [searched, setSearched] = useState(false)
 
   const combineDateTime = (date: string, time: string) => {
-    return `${date}T${time}:00`
+    return new Date(`${date}T${time}:00`).toISOString();
   }
 
   const navigate = useNavigate()
