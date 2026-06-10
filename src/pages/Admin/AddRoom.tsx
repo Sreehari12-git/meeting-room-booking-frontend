@@ -26,6 +26,8 @@ function AddRoom() {
   const [editAmenities, setEditAmenities] = useState<string[]>([])
   const [message, setMessage] = useState("")
   const [isError, setError] = useState(false)
+  const [editMaintenanceStart, setEditMaintenanceStart] = useState("")
+  const [editMaintenanceEnd, setEditMaintenanceEnd] = useState("")
 
   const toggleAmenity = (amenity: string) => {
     setAmenities(prev =>
@@ -103,7 +105,7 @@ function AddRoom() {
                 Edit room
               </h2>
               <button
-                onClick={() => setSelectedRoom(null)}
+                onClick={() => {setSelectedRoom(null); setEditMaintenanceStart(""); setEditMaintenanceEnd("")}}
                 className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-400 hover:bg-gray-50 transition"
                 aria-label="Close"
               >
@@ -136,6 +138,33 @@ function AddRoom() {
               </select>
             </div>
 
+            {editStatus === "MAINTANENCE" && (
+  <div className="grid grid-cols-2 gap-3 mb-4">
+    <div>
+      <label className={labelClass}>
+        <i className="ti ti-calendar" aria-hidden="true" /> Maintenance start
+      </label>
+      <input
+        type="date"
+        value={editMaintenanceStart}
+        onChange={e => setEditMaintenanceStart(e.target.value)}
+        className={inputClass}
+      />
+    </div>
+    <div>
+      <label className={labelClass}>
+        <i className="ti ti-calendar-due" aria-hidden="true" /> Maintenance end
+      </label>
+      <input
+        type="date"
+        value={editMaintenanceEnd}
+        onChange={e => setEditMaintenanceEnd(e.target.value)}
+        className={inputClass}
+      />
+    </div>
+  </div>
+)}
+
             <div className="mb-1">
               <label className={labelClass}>
                 <i className="ti ti-layout-grid" aria-hidden="true" /> Amenities
@@ -159,11 +188,11 @@ function AddRoom() {
             </div>
 
             <div className="flex gap-3 mt-6 pt-5 border-t border-gray-100">
-              <button onClick={() => setSelectedRoom(null)}
+              <button onClick={() => {setSelectedRoom(null); setEditMaintenanceStart(""); setEditMaintenanceEnd("")}}
                 className="flex-1 flex items-center justify-center gap-1.5 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg px-4 py-2.5 hover:bg-gray-50 transition">
                 <i className="ti ti-x text-xs" aria-hidden="true" /> Cancel
               </button>
-              <button onClick={() => updRoom(selectedRoom.name, { name: editName, capacity: editCapacity, status: editStatus, amenities: editAmenities })}
+              <button onClick={() => updRoom(selectedRoom.name, { name: editName, capacity: editCapacity, status: editStatus, amenities: editAmenities, maintenanceStart: editMaintenanceStart, maintenanceEnd: editMaintenanceEnd })}
                 className="flex-1 flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg px-4 py-2.5 transition">
                 <i className="ti ti-check text-xs" aria-hidden="true" /> Update room
               </button>
