@@ -34,3 +34,9 @@ export const getAllBookings = async() => {
     return response.data;
 }
 
+export const getUnavailableSlots = async (roomId: number, date: string) => {
+    const response = await api.get("/booking/unavailable-slots", {
+        params: { roomId, date }
+    });
+    return response.data;
+};

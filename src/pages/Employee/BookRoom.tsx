@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { getRooms } from "../../api/roomApi";
-import { bookRoom } from "../../api/bookingApi";
+import { bookRoom, getUnavailableSlots } from "../../api/bookingApi";
 
 const AMENITY_ICONS: Record<string, string> = {
   "Projector": "ti-device-projector",
@@ -37,6 +37,10 @@ function BookRoom() {
   const [bookingError, setBookingError] = useState("");
   const [bookingSuccess, setBookingSuccess] = useState(false);
 
+  const [unavailableSlots, setUnavailableSlots] = useState<string[]>([]);
+  const [slotsLoading, setSlotsLoading] = useState(false);
+
+
   const toISO = (dateStr: string, totalMin: number) => {
     const h = Math.floor(totalMin / 60);
     const m = totalMin % 60;
@@ -62,6 +66,8 @@ function BookRoom() {
     setBookingSuccess(false);
     setStartTime(null);
     setEndTime(null);
+    setBookingDate("");
+    setUnavailableSlots([]); 
   };
 
   const handleBooking = async () => {
@@ -178,10 +184,34 @@ function BookRoom() {
               <input
                 type="date"
                 value={bookingDate}
-                onChange={(e) => setBookingDate(e.target.value)}
+                onChange={async (e) => {
+        const date = e.target.value;
+        setBookingDate(date);
+        setStartTime(null);
+        setEndTime(null);
+        setUnavailableSlots([]);
+
+        if (date && selectedRoom) {
+            setSlotsLoading(true);
+            try {
+                const data = await getUnavailableSlots(selectedRoom.id, date);
+                setUnavailableSlots(data.unavailableSlots);
+            } catch (err) {
+                console.error("Failed to fetch unavailable slots", err);
+            } finally {
+                setSlotsLoading(false);
+            }
+        }
+    }}
                 min={new Date().toISOString().split("T")[0]}
                 className={inputClass}
               /> 
+              {slotsLoading && (
+        <p className="text-xs text-gray-400 mt-1.5 flex items-center gap-1.5">
+            <span className="w-3 h-3 border border-gray-300 border-t-blue-500 rounded-full animate-spin inline-block" />
+            Checking availability…
+        </p>
+    )}
             </div>
 
             <div className="mb-4">
@@ -195,12 +225,14 @@ function BookRoom() {
   const todayStr = now.toISOString().split("T")[0];
   const currentTotalMin = now.getHours() * 60 + now.getMinutes();
   const isPast = bookingDate === todayStr && slot.totalMin <= currentTotalMin;
+  const isBlocked = unavailableSlots.includes(slot.label);
+  const isDisabled = isPast || isBlocked;  
 
   return (
     <button
       key={slot.totalMin}
       type="button"
-      disabled={isPast}
+      disabled={isDisabled}
       onClick={() => {
         setStartTime(slot.totalMin);
         if (endTime !== null && endTime <= slot.totalMin) setEndTime(null);
@@ -226,26 +258,39 @@ function BookRoom() {
                 End time
               </label>
               <div className="grid grid-cols-6 gap-1.5">
-                {timeSlots.map((slot) => {
-                  const disabled = startTime !== null && slot.totalMin <= startTime;
-                  return (
-                    <button
-                      key={slot.totalMin}
-                      type="button"
-                      disabled={disabled}
-                      onClick={() => setEndTime(slot.totalMin)}
-                      className={`py-1.5 text-xs rounded-lg border transition-colors ${
-                        endTime === slot.totalMin
-                          ? "bg-blue-600 text-white border-blue-600 font-medium"
-                          : disabled
-                          ? "border-gray-100 text-gray-300 cursor-not-allowed"
-                          : "border-gray-200 text-gray-500 hover:bg-gray-50"
-                      }`}
-                    >
-                      {slot.label}
-                    </button>
-                  );
-                })}
+{timeSlots.map((slot) => {
+    const isBefore = startTime !== null && slot.totalMin <= startTime;
+    const isBlocked = unavailableSlots.includes(slot.label);
+
+    // block end slots whose path crosses a blocked slot
+    const hasConflict = startTime !== null && timeSlots.some(
+        s => s.totalMin > startTime && 
+             s.totalMin < slot.totalMin && 
+             unavailableSlots.includes(s.label)
+    );
+
+    const isDisabled = isBefore || isBlocked || hasConflict;
+
+    return (
+        <button
+            key={slot.totalMin}
+            type="button"
+            disabled={isDisabled}
+            onClick={() => setEndTime(slot.totalMin)}
+            className={`py-1.5 text-xs rounded-lg border transition-colors ${
+                endTime === slot.totalMin
+                    ? "bg-blue-600 text-white border-blue-600 font-medium"
+                    : isBlocked || hasConflict
+                    ? "border-red-100 bg-red-50 text-red-300 cursor-not-allowed"
+                    : isBefore
+                    ? "border-gray-100 text-gray-300 cursor-not-allowed"
+                    : "border-gray-200 text-gray-500 hover:bg-gray-50"
+            }`}
+        >
+            {slot.label}
+        </button>
+    );
+})}
               </div>
             </div>
 
