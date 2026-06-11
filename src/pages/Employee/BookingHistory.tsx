@@ -177,7 +177,7 @@ function BookingHistory() {
                     <td className="px-5 py-4 text-gray-500">
                       <span className="flex items-center gap-1.5">
                         <i className="ti ti-calendar text-sm text-gray-400" aria-hidden="true" />
-                        {new Date(booking.startTime).toLocaleDateString([], {
+                        {new Date(booking.startTime).toLocaleDateString("en-IN", {
                           weekday: "long", day: "numeric", month: "short",
                         })}
                       </span>
@@ -186,14 +186,14 @@ function BookingHistory() {
                     <td className="px-5 py-4 text-gray-500">
                       <span className="flex items-center gap-1.5">
                         <i className="ti ti-clock text-sm text-gray-400" aria-hidden="true" />
-                        {new Date(booking.startTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                        {new Date(booking.startTime).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
                       </span>
                     </td>
 
                     <td className="px-5 py-4 text-gray-500">
                       <span className="flex items-center gap-1.5">
                         <i className="ti ti-clock-off text-sm text-gray-400" aria-hidden="true" />
-                        {new Date(booking.endTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                        {new Date(booking.endTime).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
                       </span>
                     </td>
 
