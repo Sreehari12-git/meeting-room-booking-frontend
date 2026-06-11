@@ -26,6 +26,8 @@ function AddRoom() {
   const [editAmenities, setEditAmenities] = useState<string[]>([])
   const [message, setMessage] = useState("")
   const [isError, setError] = useState(false)
+  const [maintenanceStart, setMaintenanceStart] = useState("")
+  const [maintenanceEnd, setMaintenanceEnd] = useState("")
   const [editMaintenanceStart, setEditMaintenanceStart] = useState("")
   const [editMaintenanceEnd, setEditMaintenanceEnd] = useState("")
 
@@ -38,7 +40,7 @@ function AddRoom() {
   const addRoom = async () => {
     try {
       const capacityNumber = Number(capacity)
-      await createRoom(name, status, capacityNumber, amenities)
+      await createRoom(name, status, capacityNumber, amenities,maintenanceStart ? new Date(maintenanceStart).toISOString() : null,maintenanceEnd ? new Date(maintenanceEnd).toISOString() : null)
       setMessage("Room added successfully!")
       setError(false)
       setName("")
@@ -137,6 +139,22 @@ function AddRoom() {
                 <option value="MAINTANENCE">Maintenance</option>
               </select>
             </div>
+            {status === "MAINTANENCE" && (
+  <div className="grid grid-cols-2 gap-3 mb-4">
+    <div>
+      <label className={labelClass}>
+        <i className="ti ti-calendar" aria-hidden="true" /> Maintenance start
+      </label>
+      <input type="datetime-local" value={maintenanceStart} onChange={e => setMaintenanceStart(e.target.value)} className={inputClass} />
+    </div>
+    <div>
+      <label className={labelClass}>
+        <i className="ti ti-calendar-due" aria-hidden="true" /> Maintenance end
+      </label>
+      <input type="datetime-local" value={maintenanceEnd} onChange={e => setMaintenanceEnd(e.target.value)} className={inputClass} />
+    </div>
+  </div>
+)}
 
             {editStatus === "MAINTANENCE" && (
   <div className="grid grid-cols-2 gap-3 mb-4">

@@ -1,9 +1,9 @@
 import api from "./axios"
 
-export const createRoom = async(name:string, status: string, capacity:number, amenities: string[]) => {
+export const createRoom = async(name:string, status: string, capacity:number, amenities: string[], maintenanceStart: string | null, maintenanceEnd: string | null) => {
     try {
         const response = await api.post("/admin/create-rooms", {
-            name,status,capacity,amenities
+            name,status,capacity,amenities, maintenanceStart, maintenanceEnd
         });
         return response;
     }
