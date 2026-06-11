@@ -6,10 +6,9 @@ import { AdminLayout } from './layout/Layout'
 import AddUser from './pages/Admin/AddUser'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import AddRoom from './pages/Admin/AddRoom'
-import Availability from './pages/Employee/Availability'
-import BookRoom from './pages/Employee/BookRoom'
 import BookingHistory from './pages/Employee/BookingHistory'
 import EmployeeBookings from './pages/Admin/EmployeeBookings'
+import BookRoom from './pages/Employee/BookRoom'
 
 function App() {
   return (
@@ -20,7 +19,7 @@ function App() {
           <Route path='/create-room' element={<AddRoom/>}/>
           <Route path='/create-user' element={<AddUser/>}/>
           <Route path='/all-bookings' element={<EmployeeBookings/>}/>
-          <Route path='/check-availability' element={<Availability/>}/>
+          {/* <Route path='/check-availability' element={<Availability/>}/> */}
           <Route path='/book-room' element={<BookRoom/>}/>
           <Route path='/booking-history' element={<BookingHistory/>}/>
         </Route>
