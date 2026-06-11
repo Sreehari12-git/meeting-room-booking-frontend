@@ -190,19 +190,33 @@ function BookRoom() {
                 Start time
               </label>
               <div className="grid grid-cols-6 gap-1.5">
-                {timeSlots.map((slot) => (
-                  <button key={slot.totalMin} type="button" onClick={() => {
-                    setStartTime(slot.totalMin);
-                    if (endTime !== null && endTime <= slot.totalMin) setEndTime(null);
-                  }}
-                  className={`py-1.5 text-xs rounded-lg border transition-colors ${
-                    startTime === slot.totalMin
-                      ? "bg-blue-600 text-white border-blue-600 font-medium"
-                      : "border-gray-200 text-gray-500 hover:bg-gray-50"
-                  }`}>
-                    {slot.label}
-                  </button>
-                ))}
+               {timeSlots.map((slot) => {
+  const now = new Date();
+  const todayStr = now.toISOString().split("T")[0];
+  const currentTotalMin = now.getHours() * 60 + now.getMinutes();
+  const isPast = bookingDate === todayStr && slot.totalMin <= currentTotalMin;
+
+  return (
+    <button
+      key={slot.totalMin}
+      type="button"
+      disabled={isPast}
+      onClick={() => {
+        setStartTime(slot.totalMin);
+        if (endTime !== null && endTime <= slot.totalMin) setEndTime(null);
+      }}
+      className={`py-1.5 text-xs rounded-lg border transition-colors ${
+        startTime === slot.totalMin
+          ? "bg-blue-600 text-white border-blue-600 font-medium"
+          : isPast
+          ? "border-gray-100 text-gray-300 cursor-not-allowed"
+          : "border-gray-200 text-gray-500 hover:bg-gray-50"
+      }`}
+    >
+      {slot.label}
+    </button>
+  );
+})}
               </div>
             </div>
 
