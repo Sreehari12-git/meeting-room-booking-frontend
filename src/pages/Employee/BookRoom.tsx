@@ -132,7 +132,7 @@ function BookRoom() {
 
       {selectedRoom && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-lg p-7 w-full max-w-md">
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-lg p-7 w-full max-w-md overflow-y-auto max-h-[90vh]">
 
             <div className="flex items-start justify-between pb-4 border-b border-gray-100 mb-5">
               <div className="flex items-center gap-3">
