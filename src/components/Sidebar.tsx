@@ -65,7 +65,10 @@ const Sidebar = () => {
             </NavLink>
             <NavLink to="/all-bookings" className={navLink}>
               <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 20.25a8.25 8.25 0 0 1 11.5-7.613" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 13v2l1.5 1.5" />
+                <circle cx="17" cy="17" r="3.5" strokeLinecap="round" />
               </svg>
               Employee Bookings
             </NavLink>

@@ -144,8 +144,6 @@ function EmployeeBookings() {
                                     </td>
                                     <td className="px-5 py-4">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
-                                            </div>
                                             <span className="font-medium text-gray-800">{booking.status || "—"}</span>
                                         </div>
                                     </td>
