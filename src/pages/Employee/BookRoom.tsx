@@ -40,7 +40,7 @@ function BookRoom() {
   const toISO = (dateStr: string, totalMin: number) => {
     const h = Math.floor(totalMin / 60);
     const m = totalMin % 60;
-    return `${dateStr}T${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+    return `${dateStr}T${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:00+05:30`;
   };
 
   const fetchRooms = async () => {
