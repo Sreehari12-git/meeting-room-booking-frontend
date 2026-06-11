@@ -186,55 +186,54 @@ function BookRoom() {
 
             <div className="mb-4">
               <label className={labelClass}>
-              <i className="ti ti-clock" aria-hidden="true" />
-                  Start time
+                <i className="ti ti-clock" aria-hidden="true" />
+                Start time
               </label>
               <div className="grid grid-cols-6 gap-1.5">
                 {timeSlots.map((slot) => (
-                <button key={slot.totalMin} type="button" onClick={() => {
-                  setStartTime(slot.totalMin);
-                  if (endTime !== null && endTime <= slot.totalMin) setEndTime(null);
-                }}
-                className={`py-1.5 text-xs rounded-lg border transition-colors ${
-                startTime === slot.totalMin
-                ? "bg-blue-600 text-white border-blue-600 font-medium"
-                : "border-gray-200 text-gray-500 hover:bg-gray-50"
-              }`}
-              >
-              {slot.label}
-              </button>
-              ))}
+                  <button key={slot.totalMin} type="button" onClick={() => {
+                    setStartTime(slot.totalMin);
+                    if (endTime !== null && endTime <= slot.totalMin) setEndTime(null);
+                  }}
+                  className={`py-1.5 text-xs rounded-lg border transition-colors ${
+                    startTime === slot.totalMin
+                      ? "bg-blue-600 text-white border-blue-600 font-medium"
+                      : "border-gray-200 text-gray-500 hover:bg-gray-50"
+                  }`}>
+                    {slot.label}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
 
-          <div className="mb-5">
-  <label className={labelClass}>
-    <i className="ti ti-clock-check" aria-hidden="true" />
-    End time
-  </label>
-  <div className="grid grid-cols-6 gap-1.5">
-    {timeSlots.map((slot) => {
-      const disabled = startTime !== null && slot.totalMin <= startTime;
-      return (
-        <button
-          key={slot.totalMin}
-          type="button"
-          disabled={disabled}
-          onClick={() => setEndTime(slot.totalMin)}
-          className={`py-1.5 text-xs rounded-lg border transition-colors ${
-            endTime === slot.totalMin
-              ? "bg-blue-600 text-white border-blue-600 font-medium"
-              : disabled
-              ? "border-gray-100 text-gray-300 cursor-not-allowed"
-              : "border-gray-200 text-gray-500 hover:bg-gray-50"
-          }`}
-        >
-          {slot.label}
-        </button>
-      );
-    })}
-  </div>
-</div>
+            <div className="mb-5">
+              <label className={labelClass}>
+                <i className="ti ti-clock-check" aria-hidden="true" />
+                End time
+              </label>
+              <div className="grid grid-cols-6 gap-1.5">
+                {timeSlots.map((slot) => {
+                  const disabled = startTime !== null && slot.totalMin <= startTime;
+                  return (
+                    <button
+                      key={slot.totalMin}
+                      type="button"
+                      disabled={disabled}
+                      onClick={() => setEndTime(slot.totalMin)}
+                      className={`py-1.5 text-xs rounded-lg border transition-colors ${
+                        endTime === slot.totalMin
+                          ? "bg-blue-600 text-white border-blue-600 font-medium"
+                          : disabled
+                          ? "border-gray-100 text-gray-300 cursor-not-allowed"
+                          : "border-gray-200 text-gray-500 hover:bg-gray-50"
+                      }`}
+                    >
+                      {slot.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
 
             {bookingError && (
               <div className="mb-4 flex items-center gap-2 px-3 py-2.5 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg">
