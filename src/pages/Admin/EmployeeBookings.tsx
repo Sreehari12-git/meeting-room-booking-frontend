@@ -95,6 +95,12 @@ function EmployeeBookings() {
                                         End Time
                                     </span>
                                 </th>
+                                <th className="px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <span className="flex items-center gap-1.5">
+                                        <i className="ti ti-clock-off text-xs" aria-hidden="true" />
+                                        Status
+                                    </span>
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
@@ -135,6 +141,14 @@ function EmployeeBookings() {
                                             <i className="ti ti-clock-off text-sm text-gray-400" aria-hidden="true" />
                                             {new Date(booking.endTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                                         </span>
+                                    </td>
+                                    <td className="px-5 py-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                                                <i className="ti ti-user text-blue-700 text-sm" aria-hidden="true" />
+                                            </div>
+                                            <span className="font-medium text-gray-800">{booking.status || "—"}</span>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}
