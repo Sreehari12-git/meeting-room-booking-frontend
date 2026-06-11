@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import { getRooms } from "../../api/roomApi";
 import { bookRoom } from "../../api/bookingApi";
-import { useLocation } from "react-router-dom";
 
 const AMENITY_ICONS: Record<string, string> = {
   "Projector": "ti-device-projector",
@@ -13,18 +12,36 @@ const AMENITY_ICONS: Record<string, string> = {
   "Microphone": "ti-microphone",
 }
 
+const timeSlots: any[] = [];
+for (let h = 8; h <= 18; h++) {
+  for (let m = 0; m < 60; m += 15) {
+    if (h === 18 && m > 0) break;
+    const totalMin = h * 60 + m;
+    const ampm = h < 12 ? "AM" : "PM";
+    const h12 = h > 12 ? h - 12 : h;
+    const label = `${h12}:${m === 0 ? "00" : m} ${ampm}`;
+    timeSlots.push({ label, totalMin });
+  }
+}
+
 function BookRoom() {
-  const location = useLocation();
   const [rooms, setRooms] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const [selectedRoom, setSelectedRoom] = useState<any>(null);
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
+  const [bookingDate, setBookingDate] = useState("")
+  const [startTime, setStartTime] = useState(null);
+  const [endTime, setEndTime] = useState(null);
   const [bookingLoading, setBookingLoading] = useState(false);
   const [bookingError, setBookingError] = useState("");
   const [bookingSuccess, setBookingSuccess] = useState(false);
+
+  const toISO = (dateStr: string, totalMin: number) => {
+    const h = Math.floor(totalMin / 60);
+    const m = totalMin % 60;
+    return `${dateStr}T${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+  };
 
   const fetchRooms = async () => {
     setLoading(true);
@@ -43,16 +60,20 @@ function BookRoom() {
     setSelectedRoom(room);
     setBookingError("");
     setBookingSuccess(false);
-    setStartTime("");
-    setEndTime("");
+    setStartTime(null);
+    setEndTime(null);
   };
 
   const handleBooking = async () => {
-    if (!startTime || !endTime) {
-      setBookingError("Please select both start and end time.");
+    if (!bookingDate || startTime === null || endTime === null) {
+      setBookingError("Please select a date, start time, and end time.");
       return;
     }
-    if (new Date(endTime) <= new Date(startTime)) {
+
+    const start = toISO(bookingDate, startTime);
+    const end = toISO(bookingDate, endTime);
+
+    if (new Date(end) <= new Date(start)) {
       setBookingError("End time must be after start time.");
       return;
     }
@@ -61,7 +82,7 @@ function BookRoom() {
     setBookingError("");
 
     try {
-      await bookRoom(selectedRoom.id, new Date(startTime).toISOString(), new Date(endTime).toISOString());
+      await bookRoom(selectedRoom.id, start,end);
       setBookingSuccess(true);
       setTimeout(() => {
         setSelectedRoom(null);
@@ -79,23 +100,23 @@ function BookRoom() {
     fetchRooms();
   }, []);
 
-  useEffect(() => {
-    if(location.state) {
-      const {preSelectedRoom,preSelectedDate,preSelectedStart,preSelectedEnd} = location.state;
+  // useEffect(() => {
+  //   if(location.state) {
+  //     const {preSelectedRoom,preSelectedDate,preSelectedStart,preSelectedEnd} = location.state;
 
-      if(preSelectedRoom) {
-        setSelectedRoom(preSelectedRoom);
-      }
+  //     if(preSelectedRoom) {
+  //       setSelectedRoom(preSelectedRoom);
+  //     }
 
-      if(preSelectedDate && preSelectedStart) {
-        setStartTime(`${preSelectedDate}T${preSelectedStart}`)
-      }
+  //     if(preSelectedDate && preSelectedStart) {
+  //       setStartTime(`${preSelectedDate}T${preSelectedStart}`)
+  //     }
 
-      if(preSelectedDate && preSelectedEnd) {
-        setEndTime(`${preSelectedDate}T${preSelectedEnd}`)
-      }
-    }
-  },[location.state])
+  //     if(preSelectedDate && preSelectedEnd) {
+  //       setEndTime(`${preSelectedDate}T${preSelectedEnd}`)
+  //     }
+  //   }
+  // },[location.state])
 
   const statusConfig: Record<string, { label: string; dot: string; text: string }> = {
     AVAILABLE:   { label: "Available",   dot: "bg-green-600",  text: "text-green-700"  },
@@ -152,30 +173,68 @@ function BookRoom() {
             <div className="mb-4">
               <label className={labelClass}>
                 <i className="ti ti-calendar" aria-hidden="true" />
-                Start date & time
+                Date
               </label>
               <input
-                type="datetime-local"
-                value={startTime}
-                onChange={(e) => setStartTime(e.target.value)}
-                min={new Date().toISOString().slice(0, 16)}
+                type="date"
+                value={bookingDate}
+                onChange={(e) => setBookingDate(e.target.value)}
+                min={new Date().toISOString().split("T")[0]}
                 className={inputClass}
               /> 
             </div>
 
-            <div className="mb-5">
+            <div className="mb-4">
               <label className={labelClass}>
-                <i className="ti ti-calendar-due" aria-hidden="true" />
-                End date & time
+              <i className="ti ti-clock" aria-hidden="true" />
+                  Start time
               </label>
-              <input
-                type="datetime-local"
-                value={endTime}       
-                onChange={(e) => setEndTime(e.target.value)}
-                min={startTime || new Date().toISOString().slice(0, 16)}
-                className={inputClass}
-              />
+              <div className="grid grid-cols-6 gap-1.5">
+                {timeSlots.map((slot) => (
+                <button key={slot.totalMin} type="button" onClick={() => {
+                  setStartTime(slot.totalMin);
+                  if (endTime !== null && endTime <= slot.totalMin) setEndTime(null);
+                }}
+                className={`py-1.5 text-xs rounded-lg border transition-colors ${
+                startTime === slot.totalMin
+                ? "bg-blue-600 text-white border-blue-600 font-medium"
+                : "border-gray-200 text-gray-500 hover:bg-gray-50"
+              }`}
+              >
+              {slot.label}
+              </button>
+              ))}
             </div>
+          </div>
+
+          <div className="mb-5">
+  <label className={labelClass}>
+    <i className="ti ti-clock-check" aria-hidden="true" />
+    End time
+  </label>
+  <div className="grid grid-cols-6 gap-1.5">
+    {timeSlots.map((slot) => {
+      const disabled = startTime !== null && slot.totalMin <= startTime;
+      return (
+        <button
+          key={slot.totalMin}
+          type="button"
+          disabled={disabled}
+          onClick={() => setEndTime(slot.totalMin)}
+          className={`py-1.5 text-xs rounded-lg border transition-colors ${
+            endTime === slot.totalMin
+              ? "bg-blue-600 text-white border-blue-600 font-medium"
+              : disabled
+              ? "border-gray-100 text-gray-300 cursor-not-allowed"
+              : "border-gray-200 text-gray-500 hover:bg-gray-50"
+          }`}
+        >
+          {slot.label}
+        </button>
+      );
+    })}
+  </div>
+</div>
 
             {bookingError && (
               <div className="mb-4 flex items-center gap-2 px-3 py-2.5 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg">
