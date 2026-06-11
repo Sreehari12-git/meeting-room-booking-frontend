@@ -139,23 +139,6 @@ function AddRoom() {
                 <option value="MAINTANENCE">Maintenance</option>
               </select>
             </div>
-            {status === "MAINTANENCE" && (
-  <div className="grid grid-cols-2 gap-3 mb-4">
-    <div>
-      <label className={labelClass}>
-        <i className="ti ti-calendar" aria-hidden="true" /> Maintenance start
-      </label>
-      <input type="datetime-local" value={maintenanceStart} onChange={e => setMaintenanceStart(e.target.value)} className={inputClass} />
-    </div>
-    <div>
-      <label className={labelClass}>
-        <i className="ti ti-calendar-due" aria-hidden="true" /> Maintenance end
-      </label>
-      <input type="datetime-local" value={maintenanceEnd} onChange={e => setMaintenanceEnd(e.target.value)} className={inputClass} />
-    </div>
-  </div>
-)}
-
             {editStatus === "MAINTANENCE" && (
   <div className="grid grid-cols-2 gap-3 mb-4">
     <div>
@@ -252,6 +235,32 @@ function AddRoom() {
             <option value="MAINTANENCE">Maintenance</option>
           </select>
         </div>
+        {status === "MAINTANENCE" && (
+  <div className="grid grid-cols-2 gap-3 mb-4">
+    <div>
+      <label className={labelClass}>
+        <i className="ti ti-calendar" aria-hidden="true" /> Maintenance start
+      </label>
+      <input
+        type="datetime-local"
+        value={maintenanceStart}
+        onChange={e => setMaintenanceStart(e.target.value)}
+        className={inputClass}
+      />
+    </div>
+    <div>
+      <label className={labelClass}>
+        <i className="ti ti-calendar-due" aria-hidden="true" /> Maintenance end
+      </label>
+      <input
+        type="datetime-local"
+        value={maintenanceEnd}
+        onChange={e => setMaintenanceEnd(e.target.value)}
+        className={inputClass}
+      />
+    </div>
+  </div>
+)}
 
         <div>
           <label className={labelClass}>
