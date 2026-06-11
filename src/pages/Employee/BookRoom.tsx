@@ -275,7 +275,7 @@ function BookRoom() {
             <tbody className="divide-y divide-gray-100">
               {rooms.map((room) => {
                 const sc = statusConfig[room.status] ?? { label: room.status, dot: "bg-gray-400", text: "text-gray-500" }
-                const available = room.status === "AVAILABLE"
+                const available = room.status === "AVAILABLE" || "MAINTENANCE";
                 return (
                   <tr key={room.id} className={`transition-colors ${available ? "hover:bg-gray-50" : "opacity-50"}`}>
                     <td className="px-5 py-4">
