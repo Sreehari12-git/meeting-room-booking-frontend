@@ -14,7 +14,7 @@ const AMENITY_ICONS: Record<string, string> = {
 
 const timeSlots: any[] = [];
 for (let h = 8; h <= 18; h++) {
-  for (let m = 0; m < 60; m += 15) {
+  for (let m = 0; m < 60; m += 30) {
     if (h === 18 && m > 0) break;
     const totalMin = h * 60 + m;
     const ampm = h < 12 ? "AM" : "PM";
