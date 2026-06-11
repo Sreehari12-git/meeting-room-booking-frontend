@@ -16,7 +16,7 @@ const Login = () => {
             if(data.user.role === "ADMIN") {
                 navigate('/create-room')
             } else {
-                navigate("/check-availability");
+                navigate("/book-room");
             }
 
         } catch (error: any) {
