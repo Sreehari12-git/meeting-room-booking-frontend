@@ -124,11 +124,11 @@ function BookRoom() {
   //   }
   // },[location.state])
 
-  const statusConfig: Record<string, { label: string; dot: string; text: string }> = {
-    AVAILABLE:   { label: "Available",   dot: "bg-green-600",  text: "text-green-700"  },
-    OCCUPIED:    { label: "Occupied",    dot: "bg-red-600",    text: "text-red-700"    },
-    MAINTANENCE: { label: "Maintenance", dot: "bg-amber-600",  text: "text-amber-700"  },
-  }
+  // const statusConfig: Record<string, { label: string; dot: string; text: string }> = {
+  //   AVAILABLE:   { label: "Available",   dot: "bg-green-600",  text: "text-green-700"  },
+  //   OCCUPIED:    { label: "Occupied",    dot: "bg-red-600",    text: "text-red-700"    },
+  //   MAINTANENCE: { label: "Maintenance", dot: "bg-amber-600",  text: "text-amber-700"  },
+  // }
 
   const labelClass = "flex items-center gap-1.5 text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5"
   const inputClass = "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition bg-white"
@@ -263,8 +263,6 @@ function BookRoom() {
 {timeSlots.map((slot) => {
     const isBefore = startTime !== null && slot.totalMin <= startTime;
     const isBlocked = unavailableSlots.includes(slot.label);
-
-    // block end slots whose path crosses a blocked slot
     const hasConflict = startTime !== null && timeSlots.some(
         s => s.totalMin > startTime && 
              s.totalMin < slot.totalMin && 
@@ -393,7 +391,7 @@ function BookRoom() {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {rooms.map((room) => {
-                const sc = statusConfig[room.status] ?? { label: room.status, dot: "bg-gray-400", text: "text-gray-500" }
+                // const sc = statusConfig[room.status] ?? { label: room.status, dot: "bg-gray-400", text: "text-gray-500" }
                 const available = room.status === "AVAILABLE" || "MAINTENANCE";
                 return (
                   <tr key={room.id} className={`transition-colors ${available ? "hover:bg-gray-50" : "opacity-50"}`}>
@@ -405,8 +403,8 @@ function BookRoom() {
                         <div>
                           <p className="font-medium text-gray-800 text-sm">{room.name || "—"}</p>
                           <div className="flex items-center gap-1.5 mt-0.5">
-                            <span className={`w-1.5 h-1.5 rounded-full ${sc.dot}`} />
-                            <span className={`text-xs ${sc.text}`}>{sc.label}</span>
+                            {/* <span className={`w-1.5 h-1.5 rounded-full ${sc.dot}`} />
+                            <span className={`text-xs ${sc.text}`}>{sc.label}</span> */}
                           </div>
                         </div>
                       </div>
