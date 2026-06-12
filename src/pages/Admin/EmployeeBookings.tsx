@@ -20,7 +20,29 @@ function EmployeeBookings() {
 
     useEffect(() => {
         getAll();
+        const interval = setInterval(() => {
+        setBookings((prev) => [...prev]);
+        }, 60000);
+        return () => clearInterval(interval);
     }, [])
+
+    const getBookingStatus = (booking: any) => {
+        if(booking.status === "CANCELED" ) return "CANCELED";
+        const now = new Date();
+        const start = new Date(booking.startTime);
+        const end = new Date(booking.endTime);
+        if (now < start) return "UPCOMING";
+        if(now >= start && now < end) return "ONGOING";
+        return "COMPLETED";
+    }
+
+
+    const statusConfig: Record<string, { label: string; icon: string; className: string }> = {
+        UPCOMING:  { label: "Upcoming",  icon: "ti-clock",        className: "bg-blue-100 text-blue-700"     },
+        ONGOING:   { label: "Ongoing",   icon: "ti-clock-play",   className: "bg-yellow-100 text-yellow-700" },
+        COMPLETED: { label: "Completed", icon: "ti-circle-check", className: "bg-green-100 text-green-700"   },
+        CANCELED:  { label: "Canceled",  icon: "ti-circle-x",     className: "bg-red-100 text-red-600"       },
+    };
 
     return (
         <div className="min-h-screen bg-gray-50 px-8 py-10">
@@ -143,9 +165,16 @@ function EmployeeBookings() {
                                         </span>
                                     </td>
                                     <td className="px-5 py-4">
-                                        <div className="flex items-center gap-3">
-                                            <span className="font-medium text-gray-800">{booking.status || "—"}</span>
-                                        </div>
+                                        {(() => {
+                                                    const status = getBookingStatus(booking);
+                                                    const sc = statusConfig[status] ?? { label: status, icon: "ti-point", className: "bg-gray-100 text-gray-600" };
+                                                    return (
+                                                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${sc.className}`}>
+                                                        <i className={`ti ${sc.icon} text-xs`} aria-hidden="true" />
+                                                        {sc.label}
+                                                        </span>
+                                                    );
+                                                })()}
                                     </td>
                                 </tr>
                             ))}
