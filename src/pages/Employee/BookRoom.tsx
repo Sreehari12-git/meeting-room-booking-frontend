@@ -239,11 +239,13 @@ function BookRoom() {
       }}
       className={`py-1.5 text-xs rounded-lg border transition-colors ${
         startTime === slot.totalMin
-          ? "bg-blue-600 text-white border-blue-600 font-medium"
-          : isPast
-          ? "border-gray-100 text-gray-300 cursor-not-allowed"
-          : "border-gray-200 text-gray-500 hover:bg-gray-50"
-      }`}
+        ? "bg-blue-600 text-white border-blue-600 font-medium"
+        : isBlocked
+        ? "border-red-100 bg-red-50 text-red-300 cursor-not-allowed"
+        : isPast
+        ? "border-gray-100 text-gray-300 cursor-not-allowed"
+        : "border-gray-200 text-gray-500 hover:bg-gray-50"
+    }`}
     >
       {slot.label}
     </button>
