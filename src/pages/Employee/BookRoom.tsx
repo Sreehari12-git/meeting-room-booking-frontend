@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { getRooms } from "../../api/roomApi";
-import { bookRoom, getUnavailableSlots } from "../../api/bookingApi";
+import { bookRoom, getBookingsByDate, getUnavailableSlots } from "../../api/bookingApi";
 
 const AMENITY_ICONS: Record<string, string> = {
   "Projector": "ti-device-projector",
@@ -42,6 +42,10 @@ function BookRoom() {
 
   const [meetingDescription, setMeetingDescription] = useState("");
 
+  const [viewRoom, setViewRoom] = useState<any>(null);
+  const [roomBookings, setRoomBookings] = useState<any[]>([]);
+  const [roomBookingsLoading, setRoomBookingsLoading] = useState(false);
+
 
   const toISO = (dateStr: string, totalMin: number) => {
     const h = Math.floor(totalMin / 60);
@@ -61,6 +65,23 @@ function BookRoom() {
       setLoading(false);
     }
   };
+
+  const openRoomView = async (room: any) => {
+    setViewRoom(room);
+    setRoomBookings([]);
+    setRoomBookingsLoading(true);
+    try {
+      const today = new Date().toISOString().split("T")[0];
+      const data = await getBookingsByDate(room.id, today);
+      setRoomBookings(data);
+    }
+    catch(error) {
+      console.error("Failed to fetch room bookings");
+    }
+    finally {
+      setRoomBookingsLoading(false);
+    }
+  }
 
   const openModal = (room: any) => {
     setSelectedRoom(room);
@@ -108,30 +129,6 @@ function BookRoom() {
   useEffect(() => {
     fetchRooms();
   }, []);
-
-  // useEffect(() => {
-  //   if(location.state) {
-  //     const {preSelectedRoom,preSelectedDate,preSelectedStart,preSelectedEnd} = location.state;
-
-  //     if(preSelectedRoom) {
-  //       setSelectedRoom(preSelectedRoom);
-  //     }
-
-  //     if(preSelectedDate && preSelectedStart) {
-  //       setStartTime(`${preSelectedDate}T${preSelectedStart}`)
-  //     }
-
-  //     if(preSelectedDate && preSelectedEnd) {
-  //       setEndTime(`${preSelectedDate}T${preSelectedEnd}`)
-  //     }
-  //   }
-  // },[location.state])
-
-  // const statusConfig: Record<string, { label: string; dot: string; text: string }> = {
-  //   AVAILABLE:   { label: "Available",   dot: "bg-green-600",  text: "text-green-700"  },
-  //   OCCUPIED:    { label: "Occupied",    dot: "bg-red-600",    text: "text-red-700"    },
-  //   MAINTANENCE: { label: "Maintenance", dot: "bg-amber-600",  text: "text-amber-700"  },
-  // }
 
   const labelClass = "flex items-center gap-1.5 text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5"
   const inputClass = "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition bg-white"
@@ -402,10 +399,9 @@ function BookRoom() {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {rooms.map((room) => {
-                // const sc = statusConfig[room.status] ?? { label: room.status, dot: "bg-gray-400", text: "text-gray-500" }
                 const available = room.status === "AVAILABLE" || "MAINTENANCE";
                 return (
-                  <tr key={room.id} className={`transition-colors ${available ? "hover:bg-gray-50" : "opacity-50"}`}>
+                  <tr key={room.id} onClick={() => openRoomView(room)} className={`transition-colors ${available ? "hover:bg-gray-50" : "opacity-50"}`}>
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
                         <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${available ? "bg-blue-50" : "bg-gray-100"}`}>
@@ -414,8 +410,6 @@ function BookRoom() {
                         <div>
                           <p className="font-medium text-gray-800 text-sm">{room.name || "—"}</p>
                           <div className="flex items-center gap-1.5 mt-0.5">
-                            {/* <span className={`w-1.5 h-1.5 rounded-full ${sc.dot}`} />
-                            <span className={`text-xs ${sc.text}`}>{sc.label}</span> */}
                           </div>
                         </div>
                       </div>
@@ -461,9 +455,96 @@ function BookRoom() {
           </table>
         </div>
       )}
+                    {viewRoom && (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-lg p-7 w-full max-w-md overflow-y-auto max-h-[90vh]">
+            
+            {/* Header */}
+            <div className="flex items-start justify-between pb-4 border-b border-gray-100 mb-5">
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
+                        <i className="ti ti-door text-blue-700 text-xl" aria-hidden="true" />
+                    </div>
+                    <div>
+                        <h2 className="text-base font-semibold text-gray-800">{viewRoom.name}</h2>
+                        <p className="text-xs text-gray-500 mt-0.5">
+                            Today's bookings — {new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "short" })}
+                        </p>
+                    </div>
+                </div>
+                <button
+                    onClick={() => setViewRoom(null)}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-400 hover:bg-gray-50 transition"
+                >
+                    <i className="ti ti-x text-sm" aria-hidden="true" />
+                </button>
+            </div>
+
+            {/* Loading */}
+            {roomBookingsLoading && (
+                <div className="flex items-center justify-center gap-2 text-gray-400 text-sm py-8">
+                    <div className="w-4 h-4 border-2 border-gray-200 border-t-blue-500 rounded-full animate-spin" />
+                    Loading bookings…
+                </div>
+            )}
+
+            {/* Empty */}
+            {!roomBookingsLoading && roomBookings.length === 0 && (
+                <div className="text-center py-10">
+                    <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
+                        <i className="ti ti-calendar-off text-gray-400 text-lg" aria-hidden="true" />
+                    </div>
+                    <p className="text-sm text-gray-500 font-medium">No bookings today</p>
+                    <p className="text-xs text-gray-400 mt-1">This room is free for the day</p>
+                </div>
+            )}
+
+            {/* Bookings list */}
+            {!roomBookingsLoading && roomBookings.length > 0 && (
+                <div className="flex flex-col gap-3">
+                    {roomBookings.map((booking) => (
+                        <div key={booking.id} className="flex items-start gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50">
+                            <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                                <i className="ti ti-user text-blue-700 text-sm" aria-hidden="true" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-gray-800">{booking.user?.name}</p>
+                                <p className="text-xs text-gray-500 mt-0.5 truncate">{booking.description || "No description"}</p>
+                                <span className="flex items-center gap-1 text-xs text-gray-400 mt-1">
+                                    <i className="ti ti-clock text-xs" aria-hidden="true" />
+                                    {new Date(booking.startTime).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
+                                    {" → "}
+                                    {new Date(booking.endTime).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
+                                </span>
+                            </div>
+                            <span className={`text-xs font-medium px-2.5 py-1 rounded-full flex-shrink-0 ${
+                                booking.status === "ONGOING"
+                                    ? "bg-yellow-100 text-yellow-700"
+                                    : "bg-blue-100 text-blue-700"
+                            }`}>
+                                {booking.status}
+                            </span>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            <div className="mt-5 pt-4 border-t border-gray-100">
+                <button
+                    onClick={() => { setViewRoom(null); openModal(viewRoom); }}
+                    className="w-full flex items-center justify-center gap-1.5 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                    <i className="ti ti-calendar-plus text-sm" aria-hidden="true" />
+                    Book this room
+                </button>
+            </div>
+        </div>
+    </div>
+)}
     </div>
   );
 }
+
 
 export default BookRoom;
 

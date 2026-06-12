@@ -40,3 +40,11 @@ export const getUnavailableSlots = async (roomId: number, date: string) => {
     });
     return response.data;
 };
+
+export const getBookingsByDate = async(roomId: number, date: string) =>  {
+    const response = await api.get("/booking/by-date", {
+        params: {roomId, date}
+    });
+    return response.data;
+}
+
