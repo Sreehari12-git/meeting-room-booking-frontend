@@ -434,7 +434,7 @@ function BookRoom() {
                         </div>
                       ) : "—"}
                     </td>
-                    <td className="px-5 py-4 text-right">
+                    {/* <td className="px-5 py-4 text-right">
                       <button
                         onClick={() => openModal(room)}
                         disabled={!available}
@@ -447,7 +447,7 @@ function BookRoom() {
                         <i className={`ti ${available ? "ti-calendar-plus" : "ti-ban"} text-xs`} aria-hidden="true" />
                         {available ? "Book" : "Unavailable"}
                       </button>
-                    </td>
+                    </td> */}
                   </tr>
                 )
               })}
@@ -459,7 +459,6 @@ function BookRoom() {
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
         <div className="bg-white rounded-2xl border border-gray-200 shadow-lg p-7 w-full max-w-md overflow-y-auto max-h-[90vh]">
             
-            {/* Header */}
             <div className="flex items-start justify-between pb-4 border-b border-gray-100 mb-5">
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
@@ -480,7 +479,6 @@ function BookRoom() {
                 </button>
             </div>
 
-            {/* Loading */}
             {roomBookingsLoading && (
                 <div className="flex items-center justify-center gap-2 text-gray-400 text-sm py-8">
                     <div className="w-4 h-4 border-2 border-gray-200 border-t-blue-500 rounded-full animate-spin" />
@@ -488,7 +486,6 @@ function BookRoom() {
                 </div>
             )}
 
-            {/* Empty */}
             {!roomBookingsLoading && roomBookings.length === 0 && (
                 <div className="text-center py-10">
                     <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
@@ -499,7 +496,6 @@ function BookRoom() {
                 </div>
             )}
 
-            {/* Bookings list */}
             {!roomBookingsLoading && roomBookings.length > 0 && (
                 <div className="flex flex-col gap-3">
                     {roomBookings.map((booking) => (
