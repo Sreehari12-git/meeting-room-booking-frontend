@@ -26,10 +26,16 @@ function AddRoom() {
   const [editAmenities, setEditAmenities] = useState<string[]>([])
   const [message, setMessage] = useState("")
   const [isError, setError] = useState(false)
-  const [maintenanceStart, setMaintenanceStart] = useState("")
-  const [maintenanceEnd, setMaintenanceEnd] = useState("")
-  const [editMaintenanceStart, setEditMaintenanceStart] = useState("")
-  const [editMaintenanceEnd, setEditMaintenanceEnd] = useState("")
+
+const [maintenanceStartDate, setMaintenanceStartDate] = useState("")
+const [maintenanceStartTime, setMaintenanceStartTime] = useState("")
+const [maintenanceEndDate, setMaintenanceEndDate] = useState("")
+const [maintenanceEndTime, setMaintenanceEndTime] = useState("")
+
+const [editMaintenanceStartDate, setEditMaintenanceStartDate] = useState("")
+const [editMaintenanceStartTime, setEditMaintenanceStartTime] = useState("")
+const [editMaintenanceEndDate, setEditMaintenanceEndDate] = useState("")
+const [editMaintenanceEndTime, setEditMaintenanceEndTime] = useState("")
 
   const toggleAmenity = (amenity: string) => {
     setAmenities(prev =>
@@ -37,10 +43,27 @@ function AddRoom() {
     )
   }
 
+  const timeOptions: { label: string; value: string }[] = [];
+  for (let h = 8; h <= 18; h++) {
+      for (let m = 0; m < 60; m += 30) {
+          if (h === 18 && m > 0) break;
+          const ampm = h < 12 ? "AM" : "PM";
+          const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+          const label = `${h12}:${m === 0 ? "00" : m} ${ampm}`;
+          const value = `${String(h).padStart(2, "0")}:${m === 0 ? "00" : m}`;
+          timeOptions.push({ label, value });
+      }
+  }
+
+const toISO = (date: string, time: string) => {
+    if (!date || !time) return null;
+    return new Date(`${date}T${time}:00+05:30`).toISOString();
+};
+
   const addRoom = async () => {
     try {
       const capacityNumber = Number(capacity)
-      await createRoom(name, status, capacityNumber, amenities,maintenanceStart ? new Date(maintenanceStart).toISOString() : null,maintenanceEnd ? new Date(maintenanceEnd).toISOString() : null)
+      await createRoom(name, status, capacityNumber, amenities,toISO(maintenanceStartDate, maintenanceStartTime), toISO(maintenanceEndDate, maintenanceEndTime))
       setMessage("Room added successfully!")
       setError(false)
       setName("")
@@ -107,7 +130,7 @@ function AddRoom() {
                 Edit room
               </h2>
               <button
-                onClick={() => {setSelectedRoom(null); setEditMaintenanceStart(""); setEditMaintenanceEnd("")}}
+                onClick={() => {setSelectedRoom(null); setEditMaintenanceStartDate(""); setEditMaintenanceStartTime(""); setEditMaintenanceEndDate("");   setEditMaintenanceEndTime("");}}
                 className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-400 hover:bg-gray-50 transition"
                 aria-label="Close"
               >
@@ -140,30 +163,40 @@ function AddRoom() {
               </select>
             </div>
             {editStatus === "MAINTANENCE" && (
-  <div className="grid grid-cols-2 gap-3 mb-4">
-    <div>
-      <label className={labelClass}>
-        <i className="ti ti-calendar" aria-hidden="true" /> Maintenance start
-      </label>
-      <input
-        type="datetime-local"
-        value={editMaintenanceStart}
-        onChange={e => setEditMaintenanceStart(e.target.value)}
-        className={inputClass}
-      />
+    <div className="grid grid-cols-2 gap-3 mb-4">
+        <div>
+            <label className={labelClass}>
+                <i className="ti ti-calendar" aria-hidden="true" /> Maintenance start
+            </label>
+            <input type="date" value={editMaintenanceStartDate}
+                onChange={e => setEditMaintenanceStartDate(e.target.value)}
+                className={inputClass + " mb-2"} />
+            <select value={editMaintenanceStartTime}
+                onChange={e => setEditMaintenanceStartTime(e.target.value)}
+                className={inputClass + " cursor-pointer"}>
+                <option value="">Select time</option>
+                {timeOptions.map(t => (
+                    <option key={t.value} value={t.value}>{t.label}</option>
+                ))}
+            </select>
+        </div>
+        <div>
+            <label className={labelClass}>
+                <i className="ti ti-calendar-due" aria-hidden="true" /> Maintenance end
+            </label>
+            <input type="date" value={editMaintenanceEndDate}
+                onChange={e => setEditMaintenanceEndDate(e.target.value)}
+                className={inputClass + " mb-2"} />
+            <select value={editMaintenanceEndTime}
+                onChange={e => setEditMaintenanceEndTime(e.target.value)}
+                className={inputClass + " cursor-pointer"}>
+                <option value="">Select time</option>
+                {timeOptions.map(t => (
+                    <option key={t.value} value={t.value}>{t.label}</option>
+                ))}
+            </select>
+        </div>
     </div>
-    <div>
-      <label className={labelClass}>
-        <i className="ti ti-calendar-due" aria-hidden="true" /> Maintenance end
-      </label>
-      <input
-        type="datetime-local"
-        value={editMaintenanceEnd}
-        onChange={e => setEditMaintenanceEnd(e.target.value)}
-        className={inputClass}
-      />
-    </div>
-  </div>
 )}
 
             <div className="mb-1">
@@ -189,11 +222,11 @@ function AddRoom() {
             </div>
 
             <div className="flex gap-3 mt-6 pt-5 border-t border-gray-100">
-              <button onClick={() => {setSelectedRoom(null); setEditMaintenanceStart(""); setEditMaintenanceEnd("")}}
+              <button onClick={() => {setSelectedRoom(null); setEditMaintenanceStartDate(""); setEditMaintenanceStartTime(""); setEditMaintenanceEndDate("");   setEditMaintenanceEndTime(""); }}
                 className="flex-1 flex items-center justify-center gap-1.5 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg px-4 py-2.5 hover:bg-gray-50 transition">
                 <i className="ti ti-x text-xs" aria-hidden="true" /> Cancel
               </button>
-              <button onClick={() => updRoom(selectedRoom.name, { name: editName, capacity: editCapacity, status: editStatus, amenities: editAmenities, maintenanceStart: editMaintenanceStart ? new Date(editMaintenanceStart).toISOString(): null, maintenanceEnd: editMaintenanceEnd ? new Date(editMaintenanceEnd).toISOString() : null })}
+              <button onClick={() => updRoom(selectedRoom.name, { name: editName, capacity: editCapacity, status: editStatus, amenities: editAmenities, maintenanceStart: toISO(editMaintenanceStartDate, editMaintenanceStartTime), maintenanceEnd: toISO(editMaintenanceEndDate, editMaintenanceEndTime) })}
                 className="flex-1 flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg px-4 py-2.5 transition">
                 <i className="ti ti-check text-xs" aria-hidden="true" /> Update room
               </button>
@@ -235,31 +268,41 @@ function AddRoom() {
             <option value="MAINTANENCE">Maintenance</option>
           </select>
         </div>
-        {status === "MAINTANENCE" && (
-  <div className="grid grid-cols-2 gap-3 mb-4">
-    <div>
-      <label className={labelClass}>
-        <i className="ti ti-calendar" aria-hidden="true" /> Maintenance start
-      </label>
-      <input
-        type="datetime-local"
-        value={maintenanceStart}
-        onChange={e => setMaintenanceStart(e.target.value)}
-        className={inputClass}
-      />
+{status === "MAINTANENCE" && (
+    <div className="grid grid-cols-2 gap-3 mb-4">
+        <div>
+            <label className={labelClass}>
+                <i className="ti ti-calendar" aria-hidden="true" /> Maintenance start
+            </label>
+            <input type="date" value={maintenanceStartDate}
+                onChange={e => setMaintenanceStartDate(e.target.value)}
+                className={inputClass + " mb-2"} />
+            <select value={maintenanceStartTime}
+                onChange={e => setMaintenanceStartTime(e.target.value)}
+                className={inputClass + " cursor-pointer"}>
+                <option value="">Select time</option>
+                {timeOptions.map(t => (
+                    <option key={t.value} value={t.value}>{t.label}</option>
+                ))}
+            </select>
+        </div>
+        <div>
+            <label className={labelClass}>
+                <i className="ti ti-calendar-due" aria-hidden="true" /> Maintenance end
+            </label>
+            <input type="date" value={maintenanceEndDate}
+                onChange={e => setMaintenanceEndDate(e.target.value)}
+                className={inputClass + " mb-2"} />
+            <select value={maintenanceEndTime}
+                onChange={e => setMaintenanceEndTime(e.target.value)}
+                className={inputClass + " cursor-pointer"}>
+                <option value="">Select time</option>
+                {timeOptions.map(t => (
+                    <option key={t.value} value={t.value}>{t.label}</option>
+                ))}
+            </select>
+        </div>
     </div>
-    <div>
-      <label className={labelClass}>
-        <i className="ti ti-calendar-due" aria-hidden="true" /> Maintenance end
-      </label>
-      <input
-        type="datetime-local"
-        value={maintenanceEnd}
-        onChange={e => setMaintenanceEnd(e.target.value)}
-        className={inputClass}
-      />
-    </div>
-  </div>
 )}
 
         <div>
