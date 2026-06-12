@@ -7,9 +7,9 @@ export const checkAvailability = async(startTime : string, endTime: string) => {
     return response.data;
 }
 
-export const bookRoom = async(roomId: number,startTime: string, endTime: string) => {
+export const bookRoom = async(roomId: number,startTime: string, endTime: string, meetingDescription: string) => {
     const response = await api.post("/booking/book-room", {
-        roomId, startTime, endTime
+        roomId, startTime, endTime, meetingDescription
     })
     return response.data;
 }

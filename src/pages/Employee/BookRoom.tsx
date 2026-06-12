@@ -40,6 +40,8 @@ function BookRoom() {
   const [unavailableSlots, setUnavailableSlots] = useState<string[]>([]);
   const [slotsLoading, setSlotsLoading] = useState(false);
 
+  const [meetingDescription, setMeetingDescription] = useState("");
+
 
   const toISO = (dateStr: string, totalMin: number) => {
     const h = Math.floor(totalMin / 60);
@@ -68,11 +70,12 @@ function BookRoom() {
     setEndTime(null);
     setBookingDate("");
     setUnavailableSlots([]); 
+    setMeetingDescription("");
   };
 
   const handleBooking = async () => {
-    if (!bookingDate || startTime === null || endTime === null) {
-      setBookingError("Please select a date, start time, and end time.");
+    if (!bookingDate || startTime === null || endTime === null || !meetingDescription) {
+      setBookingError("Please fill in all the fields including meeting description.");
       return;
     }
 
@@ -88,7 +91,7 @@ function BookRoom() {
     setBookingError("");
 
     try {
-      await bookRoom(selectedRoom.id, start,end);
+      await bookRoom(selectedRoom.id, start,end, meetingDescription);
       setBookingSuccess(true);
       setTimeout(() => {
         setSelectedRoom(null);
@@ -212,6 +215,14 @@ function BookRoom() {
             Checking availability…
         </p>
     )}
+            </div>
+
+            <div className="mb-4">  
+              <label className={labelClass}>
+                <i className="ti ti-notes" aria-hidden="true" />
+                Meeting Description
+              </label>
+              <input type="text" value={meetingDescription} onChange={(e) => setMeetingDescription(e.target.value)} placeholder="Enter the description"  className={inputClass}/>
             </div>
 
             <div className="mb-4">

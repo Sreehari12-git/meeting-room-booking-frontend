@@ -174,7 +174,7 @@ function EmployeeBookings() {
                                                         {sc.label}
                                                         </span>
                                                     );
-                                                })()}
+                                        })()}
                                     </td>
                                 </tr>
                             ))}
