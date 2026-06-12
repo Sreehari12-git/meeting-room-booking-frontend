@@ -509,7 +509,7 @@ function BookRoom() {
                             </div>
                             <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium text-gray-800">{booking.user?.name}</p>
-                                <p className="text-xs text-gray-500 mt-0.5 truncate">{booking.description || "No description"}</p>
+                                <p className="text-xs text-gray-500 mt-0.5 truncate">{booking.meetingDescription || "No description"}</p>
                                 <span className="flex items-center gap-1 text-xs text-gray-400 mt-1">
                                     <i className="ti ti-clock text-xs" aria-hidden="true" />
                                     {new Date(booking.startTime).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
