@@ -43,17 +43,17 @@ const [editMaintenanceEndTime, setEditMaintenanceEndTime] = useState("")
     )
   }
 
-  const timeOptions: { label: string; value: string }[] = [];
-  for (let h = 8; h <= 18; h++) {
-      for (let m = 0; m < 60; m += 30) {
-          if (h === 18 && m > 0) break;
-          const ampm = h < 12 ? "AM" : "PM";
-          const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
-          const label = `${h12}:${m === 0 ? "00" : m} ${ampm}`;
-          const value = `${String(h).padStart(2, "0")}:${m === 0 ? "00" : m}`;
-          timeOptions.push({ label, value });
-      }
-  }
+  // const timeOptions: { label: string; value: string }[] = [];
+  // for (let h = 8; h <= 18; h++) {
+  //     for (let m = 0; m < 60; m += 30) {
+  //         if (h === 18 && m > 0) break;
+  //         const ampm = h < 12 ? "AM" : "PM";
+  //         const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  //         const label = `${h12}:${m === 0 ? "00" : m} ${ampm}`;
+  //         const value = `${String(h).padStart(2, "0")}:${m === 0 ? "00" : m}`;
+  //         timeOptions.push({ label, value });
+  //     }
+  // }
 
 const toISO = (date: string, time: string) => {
     if (!date || !time) return null;
@@ -171,14 +171,15 @@ const toISO = (date: string, time: string) => {
             <input type="date" value={editMaintenanceStartDate}
                 onChange={e => setEditMaintenanceStartDate(e.target.value)}
                 className={inputClass + " mb-2"} />
-            <select value={editMaintenanceStartTime}
+            {/* <select value={editMaintenanceStartTime}
                 onChange={e => setEditMaintenanceStartTime(e.target.value)}
                 className={inputClass + " cursor-pointer"}>
                 <option value="">Select time</option>
                 {timeOptions.map(t => (
                     <option key={t.value} value={t.value}>{t.label}</option>
                 ))}
-            </select>
+            </select> */}
+            <input type="time" value={editMaintenanceStartTime} onChange={e => setEditMaintenanceStartTime(e.target.value)} className={inputClass} />
         </div>
         <div>
             <label className={labelClass}>
@@ -187,14 +188,15 @@ const toISO = (date: string, time: string) => {
             <input type="date" value={editMaintenanceEndDate}
                 onChange={e => setEditMaintenanceEndDate(e.target.value)}
                 className={inputClass + " mb-2"} />
-            <select value={editMaintenanceEndTime}
+            {/* <select value={editMaintenanceEndTime}
                 onChange={e => setEditMaintenanceEndTime(e.target.value)}
                 className={inputClass + " cursor-pointer"}>
                 <option value="">Select time</option>
                 {timeOptions.map(t => (
                     <option key={t.value} value={t.value}>{t.label}</option>
                 ))}
-            </select>
+            </select> */}
+            <input type="time" value={editMaintenanceEndTime} onChange={e => setEditMaintenanceEndTime(e.target.value)} className={inputClass} />
         </div>
     </div>
 )}
@@ -277,14 +279,15 @@ const toISO = (date: string, time: string) => {
             <input type="date" value={maintenanceStartDate}
                 onChange={e => setMaintenanceStartDate(e.target.value)}
                 className={inputClass + " mb-2"} />
-            <select value={maintenanceStartTime}
+            {/* <select value={maintenanceStartTime}
                 onChange={e => setMaintenanceStartTime(e.target.value)}
                 className={inputClass + " cursor-pointer"}>
                 <option value="">Select time</option>
                 {timeOptions.map(t => (
                     <option key={t.value} value={t.value}>{t.label}</option>
                 ))}
-            </select>
+            </select> */}
+            <input type="time" value={maintenanceStartTime} onChange={e => setMaintenanceStartTime(e.target.value)} className={inputClass} />
         </div>
         <div>
             <label className={labelClass}>
@@ -293,14 +296,15 @@ const toISO = (date: string, time: string) => {
             <input type="date" value={maintenanceEndDate}
                 onChange={e => setMaintenanceEndDate(e.target.value)}
                 className={inputClass + " mb-2"} />
-            <select value={maintenanceEndTime}
+            {/* <select value={maintenanceEndTime}
                 onChange={e => setMaintenanceEndTime(e.target.value)}
                 className={inputClass + " cursor-pointer"}>
                 <option value="">Select time</option>
                 {timeOptions.map(t => (
                     <option key={t.value} value={t.value}>{t.label}</option>
                 ))}
-            </select>
+            </select> */}
+            <input type="time" value={maintenanceEndTime} onChange={e => setMaintenanceEndTime(e.target.value)} className={inputClass} />
         </div>
     </div>
 )}
