@@ -43,15 +43,15 @@ const [editMaintenanceEndTime, setEditMaintenanceEndTime] = useState("")
     )
   }
 
-  const getEffectiveStaus = (room: any) => {
-    if(room.status === "MAINTANENCE" && room.maintenanceEnd) {
-      const now = new Date();
-      if(new Date(room.maintenanceEnd) < now) {
-        return "AVAILABLE";
-      }
-    }
-    return room.status;
-  }
+  // const getEffectiveStaus = (room: any) => {
+  //   if(room.status === "MAINTANENCE" && room.maintenanceEnd) {
+  //     const now = new Date();
+  //     if(new Date(room.maintenanceEnd) < now) {
+  //       return "AVAILABLE";
+  //     }
+  //   }
+  //   return room.status;
+  // }
 
   // const timeOptions: { label: string; value: string }[] = [];
   // for (let h = 8; h <= 18; h++) {
@@ -382,8 +382,8 @@ const toISO = (date: string, time: string) => {
 
       <div className="flex flex-col gap-3 max-w-3xl">
         {rooms.map((room: any) => {
-          const effectiveStatus = getEffectiveStaus(room);
-          const sc = statusConfig[effectiveStatus] ?? { label: room.status, className: "bg-gray-100 text-gray-600 border border-gray-200", dot: "bg-gray-400" }
+          // const effectiveStatus = getEffectiveStaus(room);
+          const sc = statusConfig[room.status] ?? { label: room.status, className: "bg-gray-100 text-gray-600 border border-gray-200", dot: "bg-gray-400" }
           return (
             <div key={room.id} className="bg-white rounded-2xl border border-gray-200 p-4 flex items-start gap-4 hover:border-gray-300 transition-colors shadow-sm">
               <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
@@ -402,7 +402,7 @@ const toISO = (date: string, time: string) => {
                     <span className={`w-1.5 h-1.5 rounded-full ${sc.dot}`} />
                     {sc.label}
                   </span>
-                  {effectiveStatus === "MAINTANENCE" && room.maintenanceStart && room.maintenanceEnd && (
+                  {room.status === "MAINTANENCE" && room.maintenanceStart && room.maintenanceEnd && (
                   <span className="flex items-center gap-1 text-xs text-amber-600">
                     <i className="ti ti-calendar-exclamation text-xs" aria-hidden="true" />
                       {new Date(room.maintenanceStart).toLocaleString([], { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
