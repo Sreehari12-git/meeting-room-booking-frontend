@@ -44,7 +44,7 @@ const [editMaintenanceEndTime, setEditMaintenanceEndTime] = useState("")
   }
 
   const getEffectiveStaus = (room: any) => {
-    if(room.status === "MAINTENANCE" && room.maintenanceEnd) {
+    if(room.status === "MAINTANENCE" && room.maintenanceEnd) {
       const now = new Date();
       if(new Date(room.maintenanceEnd) < now) {
         return "AVAILABLE";
@@ -91,7 +91,16 @@ const toISO = (date: string, time: string) => {
   const fetchRooms = async () => {
     try {
       const response = await getRooms()
-      setRooms(response.data)
+      const roomsData = response.data;
+      const now = new Date();
+
+      for(const room of roomsData) {
+        if (room.status === "MAINTANENCE" && new Date(room.maintenanceEnd) < now) {
+          await updateRoom(room.name, {...room, status: "AVAILABLE", maintenanceStart: null, maintenanceEnd: null})
+        } 
+      }
+      const updated = await getRooms();
+      setRooms(updated.data);
     } catch (error) {
       console.log(error)
     }
